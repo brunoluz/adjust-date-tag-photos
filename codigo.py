@@ -7,13 +7,12 @@ from PIL import Image
 from datetime import datetime
 from sys import platform
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--dir', type=str)
 
 EXIF_DATETIME = 306
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG, format='%(message)s')
+logging.basicConfig(stream=sys.stdout, level=logging.INFO, format='%(message)s')
 logger = logging.getLogger()
 
 
@@ -30,7 +29,10 @@ def adjust_creation_datetime_from_pictures_in_dir(directory):
 
         if platform == "darwin":  # macos
             formated_datetime = pic_datetime_obj.strftime('%m/%d/%Y %I:%M:%S %p')
-            exitcode = os.system(f'SetFile -d "{formated_datetime}" -m "{formated_datetime}" "{os.path.join(directory, picture)}"')
+            exitcode = os.system(
+                f'SetFile -d "{formated_datetime}" -m "{formated_datetime}" "{os.path.join(directory, picture)}"')
+            logger.info(f"adjusted: {os.path.join(directory, picture)}")
+
             if exitcode != 0:
                 raise 'there was a problem executing updating the file time'
 
